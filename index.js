@@ -5,7 +5,8 @@ const app = express();
 const server = require('http').createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
-const port = process.env.PORT || 5000;
+const { config } = require('./config/config');
+const port = config.port;
 const router = require('./routes');
 const createBusiness = require('./schemas/businessSchema');
 const createNews = require('./schemas/newsSchema');
@@ -30,7 +31,7 @@ createAdmin();
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 server.listen(port, () => {
-  console.log(port);
+  console.log(process.env.PORT);
   console.log(`mi port ${port}`);
 });
 

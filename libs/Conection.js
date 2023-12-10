@@ -5,15 +5,6 @@ const URI = `postgres://${config.dbUser}:${config.dbPass}@${config.dbHost}:${con
 // const URI = `postgres://carlostoro:sI7BJq2RV9ivU07AEoPzZG0xTuAUN9Pz@dpg-cf2panarrk0bppcc9cg0-a.oregon-postgres.render.com/my_store_z87a?ssl=true`;
 
 const pool = new Pool({ connectionString: URI });
-
-// pool.connect((err) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log('conexion success');
-//   }
-// });
-
 pool.on('error', (err, client) => {
     console.error('Error en el pool de conexiones:', err);
     process.exit(-1);
