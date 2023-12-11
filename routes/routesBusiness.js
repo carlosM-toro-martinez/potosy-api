@@ -2,7 +2,7 @@ const express = require('express');
 const route = express.Router();
 const Business = require('../services/servicesBusiness');
 const passport = require('passport');
-const { upload } = require('../middlewares/multerConfig')
+const { upload, optimizeImage } = require('../middlewares/multerConfig')
 
 const business = new Business();
 
@@ -39,7 +39,17 @@ route.get('/', async (req, res) => {
   }
 });
 
-route.post('/', upload.single('image'), async (req, res) => {
+route.get('/logo-urls', async (req, res) => {
+  try {
+    const logoUrls = await business.getAllLogoUrls();
+    res.json(logoUrls);
+  } catch (error) {
+    console.error('Error fetching logo URLs:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+route.post('/', upload.single('image'), optimizeImage, async (req, res) => {
   const imageUrl = process.env.HOST + req?.file?.path
   const newBusiness = { ...req.body, logo_url: imageUrl };
   try {
@@ -51,7 +61,7 @@ route.post('/', upload.single('image'), async (req, res) => {
   }
 });
 
-route.put('/:businessId', upload.single('image'), async (req, res) => {
+route.put('/:businessId', upload.single('image'), optimizeImage, async (req, res) => {
   const businessId = req.params.businessId;
   const imageUrl = process.env.HOST + req?.file?.path;
   const updatedBusiness = { ...req.body, logo_url: imageUrl };

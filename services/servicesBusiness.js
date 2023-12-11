@@ -279,6 +279,24 @@ class businesServices {
       throw error;
     }
   }
+  async getAllLogoUrls() {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.query(`
+        SELECT logo_url FROM Business
+        ORDER BY RANDOM()
+        LIMIT 5;
+      `);
+
+      const logoUrls = result.rows.map(row => row.logo_url);
+      client.release();
+      return logoUrls;
+    } catch (error) {
+      console.error('Error fetching logo URLs:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = businesServices;
