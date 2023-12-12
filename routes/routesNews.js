@@ -32,7 +32,6 @@ route.get('/:newsId', async (req, res) => {
 route.post('/', upload.single('image'), optimizeImage, async (req, res) => {
   const imageUrl = process.env.HOST + req?.file?.path
   const newNews = { ...req.body, promotional_image_url: imageUrl };
-  console.log(newNews);
   try {
     const createdNews = await newsService.createNews(newNews);
     res.json(createdNews);
@@ -43,15 +42,11 @@ route.post('/', upload.single('image'), optimizeImage, async (req, res) => {
 });
 
 route.put('/:newsId', upload.single('image'), optimizeImage, async (req, res) => {
-  console.log('entre');
   const newsId = req.params.newsId;
-  console.log(newsId);
 
   const imageUrl = process.env.HOST + req?.file?.path
-  console.log(imageUrl);
 
   const updatedNews = { ...req.body, promotional_image_url: imageUrl };
-  //console.log(updatedNews);
   try {
     const updatedNewsResult = await newsService.updateNews(newsId, updatedNews);
     if (!updatedNewsResult) {

@@ -7,6 +7,16 @@ const { upload, optimizeImage } = require('../middlewares/multerConfig')
 const business = new Business();
 
 
+route.get('/logoUrls', async (req, res) => {
+  try {
+    const logoUrls = await business.getAllLogoUrls();
+    res.json(logoUrls);
+  } catch (error) {
+    console.error('Error fetching logo URLs:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 route.get('/section/:sectionId', async (req, res) => {
   const sectionId = req.params.sectionId;
   try {
@@ -35,16 +45,6 @@ route.get('/', async (req, res) => {
     res.json(businesses);
   } catch (error) {
     console.error('Error fetching businesses:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-route.get('/logo-urls', async (req, res) => {
-  try {
-    const logoUrls = await business.getAllLogoUrls();
-    res.json(logoUrls);
-  } catch (error) {
-    console.error('Error fetching logo URLs:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
