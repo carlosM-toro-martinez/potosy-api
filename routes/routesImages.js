@@ -1,7 +1,7 @@
 const express = require('express');
 const route = express.Router();
 const Images = require('../services/servicesImages');
-const { upload, deleteImageOnError } = require('../middlewares/multerConfig')
+const { upload, deleteImageOnError, furtherOptimizeImage } = require('../middlewares/multerConfig')
 
 const images = new Images();
 
@@ -27,7 +27,7 @@ route.get('/randomImages', async (req, res) => {
 });
 
 
-route.post('/', upload.single('image'), async (req, res) => {
+route.post('/', upload.single('image'), furtherOptimizeImage, async (req, res) => {
     const imageUrl = process.env.HOST + req?.file?.path;
     const imageData = { ...req.body, image_url: imageUrl };
 
@@ -40,7 +40,7 @@ route.post('/', upload.single('image'), async (req, res) => {
     }
 });
 
-route.put('/:imageId', upload.single('image'), async (req, res) => {
+route.put('/:imageId', upload.single('image'), furtherOptimizeImage, async (req, res) => {
     const imageId = req?.params?.imageId;
     const imageUrl = process.env.HOST + req?.file?.path;
     const updatedImageData = { ...req.body, image_url: imageUrl };

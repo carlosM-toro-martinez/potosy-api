@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-const optimizeImage = async (req, res, next) => {
+const furtherOptimizeImage = async (req, res, next) => {
   if (!req.file) {
     return next();
   }
@@ -25,6 +25,28 @@ const optimizeImage = async (req, res, next) => {
 
     await sharp(imagePath)
       .resize({ width: 800, height: 600, fit: 'inside' })
+      .toFile(tempImagePath);
+
+    await fs.rename(tempImagePath, imagePath);
+
+    next();
+  } catch (error) {
+    console.error('Error durante la optimización adicional de la imagen:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const optimizeImage = async (req, res, next) => {
+  if (!req.file) {
+    return next();
+  }
+
+  try {
+    const imagePath = req.file.path;
+    const tempImagePath = imagePath.replace(/\.(\w+)$/, '_temp.$1'); // Nombre de archivo temporal
+
+    await sharp(imagePath)
+      .resize({ width: 400, height: 300, fit: 'inside' })
       .toFile(tempImagePath);
 
     await fs.rename(tempImagePath, imagePath);
@@ -53,4 +75,4 @@ const deleteImageOnError = async (req, res, next) => {
   }
 };
 
-module.exports = { upload, deleteImageOnError, optimizeImage };
+module.exports = { upload, deleteImageOnError, optimizeImage, furtherOptimizeImage };

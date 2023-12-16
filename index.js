@@ -17,7 +17,7 @@ const passport = require('passport');
 
 require('./middlewares/passportConfig')
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(cors({ credentials: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,6 +29,14 @@ createNews();
 createAdmin();
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use((req, res, next) => {
+  if (req.hostname === 'api.potosymasquehistoria.com') {
+    res.send('¡Hola desde el subdominio api.potosymasquehistoria.com!');
+  } else {
+    next();
+  }
+});
 
 server.listen(port, () => {
   console.log(process.env.PORT);

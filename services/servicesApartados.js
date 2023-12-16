@@ -54,9 +54,10 @@ class apartadosServices {
   async updateSection(sectionId, updatedData) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query('UPDATE Sections SET title = $1, description = $2 WHERE section_id = $3 RETURNING *', [
+      const result = await client.query('UPDATE Sections SET title = $1, description = $2, image_url = $3 WHERE section_id = $4 RETURNING *', [
         updatedData.title,
         updatedData.description,
+        updatedData.image_url,
         sectionId,
       ]);
       const updatedSection = result.rows[0];
