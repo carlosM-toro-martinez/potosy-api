@@ -56,7 +56,7 @@ route.put('/:imageId', upload.single('image'), furtherOptimizeImage, async (req,
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-route.delete('/:imageId', deleteImageOnError, async (req, res) => {
+route.delete('/:imageId/:name', deleteImageOnError, async (req, res) => {
     const imageId = req.params.imageId;
     try {
         const deletedImage = await images.deleteImage(imageId);

@@ -60,18 +60,24 @@ const optimizeImage = async (req, res, next) => {
 
 const deleteImageOnError = async (req, res, next) => {
   try {
-    await upload.single('image')(req, res);
-    await optimizeImage(req, res, next);
-  } catch (err) {
-    const filePath = req?.file?.path;
-    if (filePath) {
-      try {
-        await fs.unlink(filePath);
-      } catch (deleteError) {
-        console.error('Error deleting image:', deleteError);
-      }
+    const imageId = req.params.name;
+    const imagePath = path.join(__dirname, 'uploads', imageId);
+    console.log(imagePath);
+    const fileExists = await fs.access(imagePath)
+      .then(() => true)
+      .catch(() => false);
+
+    if (fileExists) {
+      await fs.unlink(imagePath);
+      console.log('Image deleted successfully:', imagePath);
+    } else {
+      console.log('Image not found:', imagePath);
     }
-    next(err);
+
+    next();
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 

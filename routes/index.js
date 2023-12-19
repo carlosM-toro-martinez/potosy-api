@@ -1,6 +1,7 @@
 const express = require('express');
 const routeBusiness = require('./routesBusiness');
 const routeApartados = require('./routesApartados');
+const routesAdmin = require('./routesAdmin');
 const routeSession = require('./routesSession');
 const routesNews = require('./routesNews');
 const routesOpeningHours = require('./routesOpeningHours');
@@ -14,6 +15,7 @@ function router(app) {
   app.use('/api/v1', routes);
   routes.use('/business', routeBusiness);
   routes.use('/sections', routeApartados);
+  routes.use('/admin', routesAdmin);
   routes.use('/sessions', routeSession);
   routes.use('/news', routesNews);
   routes.use('/openingHours', routesOpeningHours);

@@ -1,7 +1,7 @@
 const express = require('express');
 const News = require('../services/servicesNews');
 const route = express.Router();
-const { upload, optimizeImage } = require('../middlewares/multerConfig')
+const { upload, furtherOptimizeImage } = require('../middlewares/multerConfig')
 const newsService = new News();
 
 route.get('/', async (req, res) => {
@@ -29,7 +29,7 @@ route.get('/:newsId', async (req, res) => {
   }
 });
 
-route.post('/', upload.single('image'), optimizeImage, async (req, res) => {
+route.post('/', upload.single('image'), furtherOptimizeImage, async (req, res) => {
   const imageUrl = process.env.HOST + req?.file?.path
   const newNews = { ...req.body, promotional_image_url: imageUrl };
   try {
@@ -41,7 +41,7 @@ route.post('/', upload.single('image'), optimizeImage, async (req, res) => {
   }
 });
 
-route.put('/:newsId', upload.single('image'), optimizeImage, async (req, res) => {
+route.put('/:newsId', upload.single('image'), furtherOptimizeImage, async (req, res) => {
   const newsId = req.params.newsId;
 
   const imageUrl = process.env.HOST + req?.file?.path
