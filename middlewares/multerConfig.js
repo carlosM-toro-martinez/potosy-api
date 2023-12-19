@@ -61,7 +61,7 @@ const optimizeImage = async (req, res, next) => {
 const deleteImageOnError = async (req, res, next) => {
   try {
     const imageId = req.params.name;
-    const imagePath = path.join(__dirname, 'uploads', imageId);
+    const imagePath = path.join(__dirname, '..', 'uploads', imageId);
     console.log(imagePath);
     const fileExists = await fs.access(imagePath)
       .then(() => true)
