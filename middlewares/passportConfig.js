@@ -11,6 +11,8 @@ passport.use('signup', new localStrategy({
     passwordField: 'password',
     passReqToCallback: true
 }, async (req, username, password, done) => {
+    console.log(username);
+    console.log(passport);
     try {
         const { business_id } = req.body;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -27,6 +29,9 @@ passport.use('login', new localStrategy({
     usernameField: 'username',
     passwordField: 'password',
 }, async (username, password, done) => {
+    console.log('2');
+    console.log(username);
+    console.log(passport);
     try {
         const result = await pool.query('SELECT * FROM EstablishmentAdmin WHERE username = $1', [username]);
         const user = result.rows[0];

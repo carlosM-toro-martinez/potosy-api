@@ -13,6 +13,8 @@ route.post('/signup', passport.authenticate('signup', { session: false }), async
 })
 
 route.post('/login', async (req, res, next) => {
+  console.log(req.params);
+  console.log('1');
   passport.authenticate('login', async (err, user, info) => {
     try {
       if (err || !user) {
