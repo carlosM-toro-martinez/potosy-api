@@ -15,6 +15,8 @@ const createAdmin = require('./schemas/adminSchema');
 const path = require('path');
 const passport = require('passport');
 
+app.set('trust proxy', true);
+
 require('./middlewares/passportConfig')
 
 app.use('/', express.static(path.join(__dirname, 'public')));

@@ -9,7 +9,8 @@ const saltRounds = 10;
 passport.use('signup', new localStrategy({
     usernameField: 'username',
     passwordField: 'password',
-    passReqToCallback: true
+    passReqToCallback: true,
+    proxy: true,
 }, async (req, username, password, done) => {
     console.log(username);
     console.log(passport);
@@ -28,6 +29,7 @@ passport.use('signup', new localStrategy({
 passport.use('login', new localStrategy({
     usernameField: 'username',
     passwordField: 'password',
+    proxy: true,
 }, async (username, password, done) => {
     console.log('2');
     console.log(username + ' + ');
@@ -54,6 +56,7 @@ passport.use('login', new localStrategy({
 passport.use(new JWTStrategy({
     secretOrKey: process.env.JWT_SECRET || 'top_secret',
     jwtFromRequest: ExtractJWT.fromUrlQueryParameter(process.env.JWT_QUERY_PARAM || 'secret_token'),
+    proxy: true,
 }, async (token, done) => {
     try {
         return done(null, token.user)
