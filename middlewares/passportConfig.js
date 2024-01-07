@@ -30,8 +30,8 @@ passport.use('login', new localStrategy({
     passwordField: 'password',
 }, async (username, password, done) => {
     console.log('2');
-    console.log(username);
-    console.log(passport);
+    console.log(username + ' + ');
+    console.log(password);
     try {
         const result = await pool.query('SELECT * FROM EstablishmentAdmin WHERE username = $1', [username]);
         const user = result.rows[0];
@@ -52,8 +52,8 @@ passport.use('login', new localStrategy({
 }))
 
 passport.use(new JWTStrategy({
-    secretOrKey: 'top_secret',
-    jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token')
+    secretOrKey: process.env.JWT_SECRET || 'top_secret',
+    jwtFromRequest: ExtractJWT.fromUrlQueryParameter(process.env.JWT_QUERY_PARAM || 'secret_token'),
 }, async (token, done) => {
     try {
         return done(null, token.user)

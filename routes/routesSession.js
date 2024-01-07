@@ -13,7 +13,6 @@ route.post('/signup', passport.authenticate('signup', { session: false }), async
 })
 
 route.post('/login', async (req, res, next) => {
-  console.log(req.params);
   console.log('1');
   passport.authenticate('login', async (err, user, info) => {
     try {
@@ -26,7 +25,9 @@ route.post('/login', async (req, res, next) => {
       req.login(user, { session: false }, async (err) => {
         if (err) return next(err)
         const body = { admin_id: user.admin_id, username: user.username }
-        const token = jwt.sign({ user: body }, 'top_secret')
+        const token = jwt.sign({ user: body }, process.env.JWT_SECRET)
+        console.log(body);
+        console.log(token);
         return res.json({ token, user })
       })
     }
