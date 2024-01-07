@@ -31,24 +31,26 @@ passport.use('login', new localStrategy({
     passwordField: 'password',
     proxy: true,
 }, async (username, password, done) => {
-    console.log('2');
-    console.log(username + ' + ');
-    console.log(password);
     try {
+        console.log('2');
+        console.log(username + ' + ');
+        console.log(password);
         const result = await pool.query('SELECT * FROM EstablishmentAdmin WHERE username = $1', [username]);
         const user = result.rows[0];
+        console.log(user);
         if (!user) {
             return done(null, false, { message: 'User not found' })
         }
 
         const validate = await bcrypt.compare(password, user.password);
-
+        console.log(validate);
         if (!validate) {
             return done(null, false, { message: 'Wrong password' })
         }
-
+        console.log('loginMidleware');
         return done(null, user, { message: 'Login successfull' })
     } catch (e) {
+        console.log('error');
         return done(e)
     }
 }))
@@ -59,6 +61,7 @@ passport.use(new JWTStrategy({
     proxy: true,
 }, async (token, done) => {
     try {
+        console.log('jwtStra');
         return done(null, token.user)
     } catch (e) {
         done(error)

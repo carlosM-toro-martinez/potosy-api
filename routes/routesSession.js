@@ -23,6 +23,7 @@ route.post('/login', async (req, res, next) => {
       }
 
       req.login(user, { session: false }, async (err) => {
+        console.log('req.login');
         if (err) return next(err)
         const body = { admin_id: user.admin_id, username: user.username }
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET)
