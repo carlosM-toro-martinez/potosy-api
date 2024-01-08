@@ -3,7 +3,7 @@ const localStrategy = require('passport-local').Strategy;
 const pool = require('../libs/Conection');
 const JWTStrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
 passport.use('signup', new localStrategy({
@@ -37,11 +37,10 @@ passport.use('login', new localStrategy({
         console.log(password);
         const result = await pool.query('SELECT * FROM EstablishmentAdmin WHERE username = $1', [username]);
         const user = result.rows[0];
-        console.log(user);
         if (!user) {
             return done(null, false, { message: 'User not found' })
         }
-
+        console.log(user);
         const validate = await bcrypt.compare(password, user.password);
         console.log(validate);
         if (!validate) {
