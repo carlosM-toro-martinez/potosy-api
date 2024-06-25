@@ -46,7 +46,7 @@ const optimizeImage = async (req, res, next) => {
     const tempImagePath = imagePath.replace(/\.(\w+)$/, '_temp.$1'); // Nombre de archivo temporal
 
     await sharp(imagePath)
-      .resize({ width: 400, height: 300, fit: 'inside' })
+      .resize({ width: 800, height: 600, fit: 'inside' })
       .toFile(tempImagePath);
 
     await fs.rename(tempImagePath, imagePath);
