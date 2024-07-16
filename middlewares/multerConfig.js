@@ -8,7 +8,10 @@ const storage = multer.diskStorage({
     cb(null, 'uploads');
   },
   filename: (req, file, cb) => {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    cb(
+      null,
+      file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+    );
   },
 });
 
@@ -21,7 +24,7 @@ const furtherOptimizeImage = async (req, res, next) => {
 
   try {
     const imagePath = req.file.path;
-    const tempImagePath = imagePath.replace(/\.(\w+)$/, '_temp.$1'); // Nombre de archivo temporal
+    const tempImagePath = imagePath.replace(/\.(\w+)$/, '_temp.$1');
 
     await sharp(imagePath)
       .resize({ width: 800, height: 600, fit: 'inside' })
@@ -31,7 +34,10 @@ const furtherOptimizeImage = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Error durante la optimización adicional de la imagen:', error);
+    console.error(
+      'Error durante la optimización adicional de la imagen:',
+      error
+    );
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -43,7 +49,7 @@ const optimizeImage = async (req, res, next) => {
 
   try {
     const imagePath = req.file.path;
-    const tempImagePath = imagePath.replace(/\.(\w+)$/, '_temp.$1'); // Nombre de archivo temporal
+    const tempImagePath = imagePath.replace(/\.(\w+)$/, '_temp.$1');
 
     await sharp(imagePath)
       .resize({ width: 800, height: 600, fit: 'inside' })
@@ -62,8 +68,8 @@ const deleteImageOnError = async (req, res, next) => {
   try {
     const imageId = req.params.name;
     const imagePath = path.join(__dirname, '..', 'uploads', imageId);
-    console.log(imagePath);
-    const fileExists = await fs.access(imagePath)
+    const fileExists = await fs
+      .access(imagePath)
       .then(() => true)
       .catch(() => false);
 
@@ -81,4 +87,9 @@ const deleteImageOnError = async (req, res, next) => {
   }
 };
 
-module.exports = { upload, deleteImageOnError, optimizeImage, furtherOptimizeImage };
+module.exports = {
+  upload,
+  deleteImageOnError,
+  optimizeImage,
+  furtherOptimizeImage,
+};

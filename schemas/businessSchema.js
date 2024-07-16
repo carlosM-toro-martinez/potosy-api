@@ -2,15 +2,17 @@ const conexion = require('../libs/Conection');
 
 async function createBusiness() {
   try {
-
     const client = await conexion.connect();
     // Create table "Sections"
     await client.query(`
       CREATE TABLE IF NOT EXISTS Sections (
         section_id SERIAL PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
+        title_en VARCHAR(255) NOT NULL,
         description TEXT,
-        image_url VARCHAR(255)
+        description_en TEXT,
+        image_url VARCHAR(255),
+        icon_url VARCHAR(255)
       )
     `);
     // Create table "Business"
@@ -19,6 +21,7 @@ async function createBusiness() {
         business_id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         description TEXT,
+        description_en TEXT,
         days_attention VARCHAR(255),
         logo_url VARCHAR(255),
         phone_number VARCHAR(20),
@@ -59,6 +62,7 @@ async function createBusiness() {
         promotion_id SERIAL PRIMARY KEY,
         business_id INT REFERENCES Business(business_id) ON DELETE CASCADE,
         promotion_details TEXT,
+        promotion_details_en TEXT,
         price TEXT
       )
     `);
@@ -69,6 +73,7 @@ async function createBusiness() {
         product_id SERIAL PRIMARY KEY,
         business_id INT REFERENCES Business(business_id) ON DELETE CASCADE,
         product_details TEXT,
+        product_details_en TEXT,
         price TEXT
       )
     `);

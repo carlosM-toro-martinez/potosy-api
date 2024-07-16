@@ -15,8 +15,18 @@ route.get('/', async (req, res) => {
   }
 });
 
+route.post('/icon', upload.single('image'), optimizeImage, async (req, res) => {
+  const iconUrl = process.env.HOST + req?.file?.path;
+  try {
+    res.status(201).json(iconUrl);
+  } catch (error) {
+    console.error('Error adding icon section:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 route.post('/', upload.single('image'), optimizeImage, async (req, res) => {
-  const imageUrl = process.env.HOST + req?.file?.path
+  const imageUrl = process.env.HOST + req?.file?.path;
   const sectionData = { ...req.body, image_url: imageUrl };
   try {
     const addedSection = await apartado.addSection(sectionData);
@@ -42,22 +52,30 @@ route.get('/:sectionId', async (req, res) => {
   }
 });
 
-route.put('/:sectionId', upload.single('image'), optimizeImage, async (req, res) => {
-  const sectionId = req.params.sectionId;
-  const imageUrl = process.env.HOST + req?.file?.path
-  const updatedData = { ...req.body, image_url: imageUrl };
-  try {
-    const updatedSection = await apartado.updateSection(sectionId, updatedData);
-    if (!updatedSection) {
-      res.status(404).json({ error: 'Section not found' });
-    } else {
-      res.json(updatedSection);
+route.put(
+  '/:sectionId',
+  upload.single('image'),
+  optimizeImage,
+  async (req, res) => {
+    const sectionId = req.params.sectionId;
+    const imageUrl = process.env.HOST + req?.file?.path;
+    const updatedData = { ...req.body, image_url: imageUrl };
+    try {
+      const updatedSection = await apartado.updateSection(
+        sectionId,
+        updatedData
+      );
+      if (!updatedSection) {
+        res.status(404).json({ error: 'Section not found' });
+      } else {
+        res.json(updatedSection);
+      }
+    } catch (error) {
+      console.error('Error updating section:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-  } catch (error) {
-    console.error('Error updating section:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
   }
-});
+);
 
 route.delete('/:sectionId', async (req, res) => {
   const sectionId = req.params.sectionId;
