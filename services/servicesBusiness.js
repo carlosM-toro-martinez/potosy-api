@@ -16,6 +16,7 @@ class businesServices {
       b.business_id,
       b.name ,
       b.description,
+      b.description_en,
       b.days_attention,
       b.logo_url,
       b.phone_number,
@@ -60,11 +61,13 @@ class businesServices {
   async getFindOneBusinesses(businessId) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query(`
+      const result = await client.query(
+        `
       SELECT
       b.business_id,
       b.name AS business_name,
       b.description AS business_description,
+      b.description_en AS business_description_en,
       b.days_attention,
       b.logo_url,
       b.phone_number,
@@ -97,8 +100,9 @@ class businesServices {
       b.business_id = $1
       GROUP BY
       b.business_id, s.section_id;
-      `, [businessId]);
-
+      `,
+        [businessId]
+      );
 
       const businesses = result.rows;
       client.release();
@@ -113,11 +117,13 @@ class businesServices {
     try {
       const client = await this.pool.connect();
       // Obtener todos los negocios de una sección con la información relacionada
-      const result = await client.query(`
+      const result = await client.query(
+        `
       SELECT
       b.business_id,
       b.name AS business_name,
       b.description AS business_description,
+      b.description_en AS business_description_en,
       b.days_attention,
       b.logo_url,
       b.phone_number,
@@ -154,7 +160,9 @@ class businesServices {
   GROUP BY
       b.business_id, s.section_id;
   
-      `, [sectionId]);
+      `,
+        [sectionId]
+      );
 
       const businesses = result.rows;
       client.release();
@@ -170,25 +178,29 @@ class businesServices {
       const client = await this.pool.connect();
 
       // Crear nuevo negocio en la tabla "Business"
-      const businessResult = await client.query(`
+      const businessResult = await client.query(
+        `
         INSERT INTO Business (
           name, description, days_attention, logo_url, mail, phone_number,
-          website_url, address, coordinates, section_id
+          website_url, address, coordinates, section_id, description_en
         ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
         ) RETURNING *;
-      `, [
-        newBusiness.name,
-        newBusiness.description,
-        newBusiness.days_attention,
-        newBusiness.logo_url,
-        newBusiness.mail,
-        newBusiness.phone_number,
-        newBusiness.website_url,
-        newBusiness.address,
-        newBusiness.coordinates,
-        newBusiness.section_id
-      ]);
+      `,
+        [
+          newBusiness.name,
+          newBusiness.description,
+          newBusiness.days_attention,
+          newBusiness.logo_url,
+          newBusiness.mail,
+          newBusiness.phone_number,
+          newBusiness.website_url,
+          newBusiness.address,
+          newBusiness.coordinates,
+          newBusiness.section_id,
+          newBusiness.description_en,
+        ]
+      );
 
       const createdBusiness = businessResult.rows[0];
       client.release();
@@ -204,7 +216,8 @@ class businesServices {
       const client = await this.pool.connect();
 
       // Actualizar negocio en la tabla "Business"
-      const businessResult = await client.query(`
+      const businessResult = await client.query(
+        `
         UPDATE Business
         SET
           name = $1,
@@ -216,22 +229,26 @@ class businesServices {
           address = $7,
           coordinates = $8,
           state = $9,
-          section_id = $10
-        WHERE business_id = $11
+          section_id = $10,
+          description_en = $11 
+        WHERE business_id = $12
         RETURNING *;
-      `, [
-        updatedBusiness.name,
-        updatedBusiness.description,
-        updatedBusiness.days_attention,
-        updatedBusiness.logo_url,
-        updatedBusiness.phone_number,
-        updatedBusiness.website_url,
-        updatedBusiness.address,
-        updatedBusiness.coordinates,
-        updatedBusiness.state,
-        updatedBusiness.section_id,
-        businessId
-      ]);
+      `,
+        [
+          updatedBusiness.name,
+          updatedBusiness.description,
+          updatedBusiness.days_attention,
+          updatedBusiness.logo_url,
+          updatedBusiness.phone_number,
+          updatedBusiness.website_url,
+          updatedBusiness.address,
+          updatedBusiness.coordinates,
+          updatedBusiness.state,
+          updatedBusiness.section_id,
+          updatedBusiness.description_en,
+          businessId,
+        ]
+      );
 
       const updatedBusinessResult = businessResult.rows[0];
       client.release();
@@ -244,12 +261,15 @@ class businesServices {
   async updateBusinessState(businessId, newState) {
     try {
       const client = await this.pool.connect();
-      const businessResult = await client.query(`
+      const businessResult = await client.query(
+        `
         UPDATE Business
         SET state = $1
         WHERE business_id = $2
         RETURNING *;
-      `, [newState, businessId]);
+      `,
+        [newState, businessId]
+      );
 
       const updatedBusinessResult = businessResult.rows[0];
       client.release();
@@ -265,11 +285,14 @@ class businesServices {
       const client = await this.pool.connect();
 
       // Eliminar negocio de la tabla "Business"
-      const businessResult = await client.query(`
+      const businessResult = await client.query(
+        `
         DELETE FROM Business
         WHERE business_id = $1
         RETURNING *;
-      `, [businessId]);
+      `,
+        [businessId]
+      );
 
       const deletedBusiness = businessResult.rows[0];
       client.release();
@@ -289,7 +312,7 @@ class businesServices {
         LIMIT 5;
       `);
 
-      const logoUrls = result.rows.map(row => row.logo_url);
+      const logoUrls = result.rows.map((row) => row.logo_url);
       client.release();
       return logoUrls;
     } catch (error) {

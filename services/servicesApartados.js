@@ -13,8 +13,14 @@ class apartadosServices {
     try {
       const client = await this.pool.connect();
       const result = await client.query(
-        'INSERT INTO Sections (title, description, image_url) VALUES ($1, $2, $3) RETURNING *',
-        [sectionData.title, sectionData.description, sectionData.image_url]
+        'INSERT INTO Sections (title, description, image_url, title_en, description_en) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [
+          sectionData.title,
+          sectionData.description,
+          sectionData.image_url,
+          sectionData.title_en,
+          sectionData.description_en,
+        ]
       );
       const addedSection = result.rows[0];
       client.release();
@@ -41,7 +47,10 @@ class apartadosServices {
   async findSectionById(sectionId) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query('SELECT * FROM Sections WHERE section_id = $1', [sectionId]);
+      const result = await client.query(
+        'SELECT * FROM Sections WHERE section_id = $1',
+        [sectionId]
+      );
       const section = result.rows[0];
       client.release();
       return section;
@@ -54,12 +63,17 @@ class apartadosServices {
   async updateSection(sectionId, updatedData) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query('UPDATE Sections SET title = $1, description = $2, image_url = $3 WHERE section_id = $4 RETURNING *', [
-        updatedData.title,
-        updatedData.description,
-        updatedData.image_url,
-        sectionId,
-      ]);
+      const result = await client.query(
+        'UPDATE Sections SET title = $1, description = $2, image_url = $3, title_en = $4, description_en = $5 WHERE section_id = $6 RETURNING *',
+        [
+          updatedData.title,
+          updatedData.description,
+          updatedData.image_url,
+          updatedData.title_en,
+          updatedData.description_en,
+          sectionId,
+        ]
+      );
       const updatedSection = result.rows[0];
       client.release();
       return updatedSection;
@@ -72,7 +86,10 @@ class apartadosServices {
   async deleteSection(sectionId) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query('DELETE FROM Sections WHERE section_id = $1 RETURNING *', [sectionId]);
+      const result = await client.query(
+        'DELETE FROM Sections WHERE section_id = $1 RETURNING *',
+        [sectionId]
+      );
       const deletedSection = result.rows[0];
       client.release();
       return deletedSection;

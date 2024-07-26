@@ -12,18 +12,23 @@ class newsServices {
   async createNews(newNews) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query(`
-              INSERT INTO News (title, description, address, time, date, promotional_image_url)
-              VALUES ($1, $2, $3, $4, $5, $6)
+      const result = await client.query(
+        `
+              INSERT INTO News (title, description, address, time, date, promotional_image_url, description_en, title_en)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
               RETURNING *;
-          `, [
-        newNews.title,
-        newNews.description,
-        newNews.address,
-        newNews.time,
-        newNews.date,
-        newNews.promotional_image_url
-      ]);
+          `,
+        [
+          newNews.title,
+          newNews.description,
+          newNews.address,
+          newNews.time,
+          newNews.date,
+          newNews.promotional_image_url,
+          newNews.description_en,
+          newNews.title_en,
+        ]
+      );
 
       const createdNews = result.rows[0];
       client.release();
@@ -50,7 +55,10 @@ class newsServices {
   async getNewsById(newsId) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query('SELECT * FROM News WHERE novelty_id = $1', [newsId]);
+      const result = await client.query(
+        'SELECT * FROM News WHERE novelty_id = $1',
+        [newsId]
+      );
       const news = result.rows[0];
       client.release();
       return news;
@@ -63,20 +71,25 @@ class newsServices {
   async updateNews(newsId, updatedNews) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query(`
+      const result = await client.query(
+        `
               UPDATE News
-              SET title = $1, description = $2, address = $3, time = $4, date = $5, promotional_image_url = $6
-              WHERE novelty_id = $7
+              SET title = $1, description = $2, address = $3, time = $4, date = $5, promotional_image_url = $6, description_en = $7, title_en = $8
+              WHERE novelty_id = $9
               RETURNING *;
-          `, [
-        updatedNews.title,
-        updatedNews.description,
-        updatedNews.address,
-        updatedNews.time,
-        updatedNews.date,
-        updatedNews.promotional_image_url,
-        newsId
-      ]);
+          `,
+        [
+          updatedNews.title,
+          updatedNews.description,
+          updatedNews.address,
+          updatedNews.time,
+          updatedNews.date,
+          updatedNews.promotional_image_url,
+          newNews.description_en,
+          newNews.title_en,
+          newsId,
+        ]
+      );
 
       const updatedNewsResult = result.rows[0];
       client.release();
@@ -91,7 +104,10 @@ class newsServices {
   async deleteNews(newsId) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query('DELETE FROM News WHERE novelty_id = $1 RETURNING *', [newsId]);
+      const result = await client.query(
+        'DELETE FROM News WHERE novelty_id = $1 RETURNING *',
+        [newsId]
+      );
       const deletedNews = result.rows[0];
       client.release();
       return deletedNews;

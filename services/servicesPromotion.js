@@ -12,11 +12,14 @@ class promotionServices {
   async getPromotionsByBusinessId(businessId) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query(`
+      const result = await client.query(
+        `
         SELECT *
         FROM Promotions
         WHERE business_id = $1;
-      `, [businessId]);
+      `,
+        [businessId]
+      );
 
       const promotions = result.rows;
       client.release();
@@ -30,11 +33,19 @@ class promotionServices {
   async createPromotion(promotionData) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query(`
-            INSERT INTO Promotions (business_id, promotion_details, price)
-            VALUES ($1, $2, $3)
+      const result = await client.query(
+        `
+            INSERT INTO Promotions (business_id, promotion_details, price, promotion_details_en)
+            VALUES ($1, $2, $3, $4)
             RETURNING *;
-        `, [promotionData.business_id, promotionData.promotion_details, promotionData.price]);
+        `,
+        [
+          promotionData.business_id,
+          promotionData.promotion_details,
+          promotionData.price,
+          promotionData.promotion_details_en,
+        ]
+      );
 
       const createdPromotion = result.rows[0];
       client.release();
@@ -48,12 +59,21 @@ class promotionServices {
   async updatePromotion(promotionId, updatedPromotionData) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query(`
+      const result = await client.query(
+        `
             UPDATE Promotions
-            SET business_id = $1, promotion_details = $2, price = $3
-            WHERE promotion_id = $4
+            SET business_id = $1, promotion_details = $2, price = $3, promotion_details_en = $4
+            WHERE promotion_id = $5
             RETURNING *;
-        `, [updatedPromotionData.business_id, updatedPromotionData.promotion_details, updatedPromotionData.price, promotionId]);
+        `,
+        [
+          updatedPromotionData.business_id,
+          updatedPromotionData.promotion_details,
+          updatedPromotionData.price,
+          updatedPromotionData.promotion_details_en,
+          promotionId,
+        ]
+      );
 
       const updatedPromotion = result.rows[0];
       client.release();
@@ -67,11 +87,14 @@ class promotionServices {
   async deletePromotion(promotionId) {
     try {
       const client = await this.pool.connect();
-      const result = await client.query(`
+      const result = await client.query(
+        `
             DELETE FROM Promotions
             WHERE promotion_id = $1
             RETURNING *;
-        `, [promotionId]);
+        `,
+        [promotionId]
+      );
 
       const deletedPromotion = result.rows[0];
       client.release();
@@ -81,7 +104,6 @@ class promotionServices {
       throw error;
     }
   }
-
 }
 
 module.exports = promotionServices;
