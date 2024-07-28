@@ -134,6 +134,8 @@ class businesServices {
       b.state,
       s.section_id,
       s.title AS section_title,
+      s.title_en AS section_title_en,
+      s.description_en AS section_description_en,
       s.description AS section_description,
       s.image_url AS section_image,
       jsonb_agg(DISTINCT jsonb_build_object('social_networks_id', sn.social_networks_id, 'facebook_url', sn.facebook_url, 'instagram_url', sn.instagram_url, 'twitter_url', sn.twitter_url, 'tiktok_url', sn.tiktok_url, 'whatsapp_number', sn.whatsapp_number )) AS socialNetworks,
