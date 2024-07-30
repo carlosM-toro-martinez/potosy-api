@@ -85,8 +85,8 @@ class newsServices {
           updatedNews.time,
           updatedNews.date,
           updatedNews.promotional_image_url,
-          newNews.description_en,
-          newNews.title_en,
+          updatedNews.description_en,
+          updatedNews.title_en,
           newsId,
         ]
       );
